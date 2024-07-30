@@ -206,7 +206,7 @@ rahmen.pack(pady=20, padx=20, fill=tk.BOTH, expand=True)
 start_button = tk.Button(rahmen, text="Aufzeichnung starten", command=starte_aufzeichnung, width=25, height=2, font=custom_font, bg="#4CAF50", fg="white", relief=tk.RAISED, borderwidth=2)
 start_button.pack(pady=10)
 
-stop_label = tk.Label(rahmen, text="Drücke ESC zum Beenden der Aufzeichnung oder die Dauerschleife", font=("Helvetica", 12), bg="#e0e0e0")
+stop_label = tk.Label(rahmen, text="Drücke ESC zum Beenden der Aufzeichnung\n oder der Dauerschleife", font=("Helvetica", 12), bg="#e0e0e0")
 stop_label.pack(pady=10)
 
 dauerschleife_var = tk.BooleanVar()
@@ -215,8 +215,5 @@ dauerschleife_checkbox.pack(pady=10)
 
 wiedergabe_button = tk.Button(rahmen, text="Ereignisse abspielen", command=spiele_ereignisse_ab_und_zeige_fehlermeldungen, width=25, height=2, font=custom_font, bg="#FFC107", fg="white", relief=tk.RAISED, borderwidth=2)
 wiedergabe_button.pack(pady=10)
-
-info_label = tk.Label(root, text="Auto-Clicker von [Dein Name]", font=("Helvetica", 10), bg="#e0e0e0")
-info_label.pack(pady=10)
 
 root.mainloop()
