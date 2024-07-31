@@ -8,12 +8,16 @@ import threading
 import queue
 import traceback
 
+###################################################################################################################
+
 # Globale Variablen
 ereignisse_queue = queue.Queue()
 aufzeichnung = False
 bool_dauerschleife = False
 esc_flag = threading.Event()
 stop_event = threading.Event()
+
+###################################################################################################################
 
 def bei_klick(x, y, taste, gedrückt):
     if aufzeichnung and gedrückt:
@@ -37,6 +41,8 @@ def bei_tastenfreigabe(taste):
         if taste == keyboard.Key.esc:
             return False
 
+###################################################################################################################
+
 def starte_maus_listener():
     with mouse.Listener(on_click=bei_klick) as listener:
         listener.join()
@@ -44,6 +50,8 @@ def starte_maus_listener():
 def starte_tastatur_listener():
     with keyboard.Listener(on_press=bei_tastendruck, on_release=bei_tastenfreigabe) as listener:
         listener.join()
+
+###################################################################################################################
 
 def starte_aufzeichnung():
     global aufzeichnung
@@ -75,6 +83,8 @@ def stoppe_aufzeichnung():
         except Exception as e:
             print(f"Fehler beim Speichern der Datei: {e}")
             traceback.print_exc()
+
+###################################################################################################################
 
 def hole_taste(taste_str):
     print(f"Verarbeite Tastencode: {taste_str}")  # Debug-Ausgabe
@@ -149,6 +159,8 @@ def spiele_ereignisse_ab(dateipfad):
     if bool_dauerschleife:
         spiele_ereignisse_ab(dateipfad)
 
+###################################################################################################################
+
 def esc_listener():
     with keyboard.Listener(on_press=bei_esc_druck) as listener:
         listener.join()
@@ -157,6 +169,8 @@ def bei_esc_druck(taste):
     if taste == keyboard.Key.esc:
         esc_flag.set()
         return False
+
+###################################################################################################################
 
 def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
     global bool_dauerschleife
@@ -181,6 +195,8 @@ def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
 
     check_threads()
 
+###################################################################################################################
+
 def stoppe_aufzeichnung_und_zeige_benachrichtigung():
     stoppe_aufzeichnung()
     messagebox.showinfo("Information", "Aufzeichnung erfolgreich beendet!")
@@ -189,6 +205,8 @@ def update_dauerschleife():
     global bool_dauerschleife
     bool_dauerschleife = dauerschleife_var.get()
     print(f"Dauerschleife ist {'aktiv' if bool_dauerschleife else 'inaktiv'}")
+
+###################################################################################################################
 
 root = tk.Tk()
 root.title("Auto-Clicker")
@@ -216,4 +234,8 @@ dauerschleife_checkbox.pack(pady=10)
 wiedergabe_button = tk.Button(rahmen, text="Ereignisse abspielen", command=spiele_ereignisse_ab_und_zeige_fehlermeldungen, width=25, height=2, font=custom_font, bg="#FFC107", fg="white", relief=tk.RAISED, borderwidth=2)
 wiedergabe_button.pack(pady=10)
 
+###################################################################################################################
+
 root.mainloop()
+
+###################################################################################################################
