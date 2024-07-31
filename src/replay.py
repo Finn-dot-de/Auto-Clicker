@@ -33,13 +33,17 @@ def hole_taste(taste_str):
 
 def spiele_ereignisse_ab(dateipfad):
     global bool_dauerschleife
-    try:
-        with open(dateipfad, 'r') as f:
-            ereignisse = [ast.literal_eval(line.strip()) for line in f]
-    except Exception as e:
-        print(f"Fehler beim Lesen der Datei: {e}")
-        traceback.print_exc()
-        raise ValueError("Fehler beim Lesen der Datei")
+
+    def lese_ereignisse(dateipfad):
+        try:
+            with open(dateipfad, 'r') as f:
+                return [ast.literal_eval(line.strip()) for line in f]
+        except Exception as e:
+            print(f"Fehler beim Lesen der Datei: {e}")
+            traceback.print_exc()
+            raise ValueError("Fehler beim Lesen der Datei")
+
+    ereignisse = lese_ereignisse(dateipfad)
 
     if not ereignisse:
         raise ValueError("Keine Ereignisse in der ausgewählten Datei.")
@@ -82,7 +86,6 @@ def spiele_ereignisse_ab(dateipfad):
         if not bool_dauerschleife:
             break
 
-    # Popup für das Ende des Replays
     print("Wiedergabe erfolgreich abgeschlossen!")  # Debug-Ausgabe
     messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
 
@@ -94,3 +97,20 @@ def bei_esc_druck(taste):
     if taste == keyboard.Key.esc:
         esc_flag.set()
         return False
+
+def starte_wiedergabe(dateipfad):
+    esc_flag.clear()
+    stop_event.clear()
+
+    abspielen_thread = threading.Thread(target=spiele_ereignisse_ab, args=(dateipfad,), daemon=True)
+    esc_thread = threading.Thread(target=esc_listener, daemon=True)
+
+    abspielen_thread.start()
+    esc_thread.start()
+
+    abspielen_thread.join()
+    esc_thread.join()
+
+    if not bool_dauerschleife:
+        messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
+
