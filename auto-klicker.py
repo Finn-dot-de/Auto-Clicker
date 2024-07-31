@@ -7,6 +7,13 @@ from pynput import mouse, keyboard
 import threading
 import queue
 import traceback
+import pyautogui
+import pygetwindow as gw
+
+###################################################################################################################
+
+# Pfad zu .ico-Icon
+# ICON_PATH = './icon.ico'
 
 ###################################################################################################################
 
@@ -16,6 +23,16 @@ aufzeichnung = False
 bool_dauerschleife = False
 esc_flag = threading.Event()
 stop_event = threading.Event()
+
+###################################################################################################################
+
+def press_windows_d():
+    pyautogui.hotkey('win', 'd')
+
+def bring_window_to_foreground(window_title):
+    window = gw.getWindowsWithTitle(window_title)
+    if window:
+        window[0].activate()
 
 ###################################################################################################################
 
@@ -57,6 +74,7 @@ def starte_aufzeichnung():
     global aufzeichnung
     aufzeichnung = True
     ereignisse_queue.queue.clear()
+    press_windows_d()
     maus_thread = threading.Thread(target=starte_maus_listener, daemon=True)
     tastatur_thread = threading.Thread(target=starte_tastatur_listener, daemon=True)
     maus_thread.start()
@@ -66,6 +84,7 @@ def stoppe_aufzeichnung():
     global aufzeichnung
     aufzeichnung = False
     stop_event.set()
+    bring_window_to_foreground('Auto-Clicker')  # Ersetze 'Auto-Clicker' durch den tatsächlichen Titel deines Fensters
     print("Aufzeichnung gestoppt.")
     dateipfad = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Textdateien", "*.txt")])
     if dateipfad:
@@ -212,6 +231,7 @@ root = tk.Tk()
 root.title("Auto-Clicker")
 root.geometry("500x500")
 root.configure(bg="#f0f0f0")
+# root.iconbitmap(ICON_PATH)
 
 custom_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
 
