@@ -3,14 +3,14 @@
 import tkinter as tk
 from tkinter import filedialog, messagebox, font as tkfont
 import threading
-from record import starte_aufzeichnung, stoppe_aufzeichnung
-from replay import spiele_ereignisse_ab
-import globals  # Importieren der globalen Variablen
-from pynput import mouse, keyboard
+from src.globals import *
+from src.record import starte_aufzeichnung
+from src.replay import spiele_ereignisse_ab
+from pynput import keyboard
 
 def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
-    globals.esc_flag.clear()
-    globals.stop_event.clear()
+    esc_flag.clear()
+    stop_event.clear()
     dateipfad = filedialog.askopenfilename(defaultextension=".txt", filetypes=[("Textdateien", "*.txt")])
     if not dateipfad:
         return
@@ -25,7 +25,7 @@ def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
         if abspielen_thread.is_alive() or esc_thread.is_alive():
             root.after(100, check_threads)
         else:
-            if not globals.bool_dauerschleife:
+            if not bool_dauerschleife:
                 messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
 
     check_threads()
@@ -36,12 +36,12 @@ def esc_listener():
 
 def bei_esc_druck(taste):
     if taste == keyboard.Key.esc:
-        globals.esc_flag.set()
+        esc_flag.set()
         return False
 
 def update_dauerschleife():
-    globals.bool_dauerschleife = dauerschleife_var.get()
-    print(f"Dauerschleife ist {'aktiv' if globals.bool_dauerschleife else 'inaktiv'}")
+    bool_dauerschleife = dauerschleife_var.get()
+    print(f"Dauerschleife ist {'aktiv' if bool_dauerschleife else 'inaktiv'}")
 
 root = tk.Tk()
 root.title("Auto-Clicker")
