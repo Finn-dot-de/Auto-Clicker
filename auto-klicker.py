@@ -13,7 +13,7 @@ import pygetwindow as gw
 ###################################################################################################################
 
 # Pfad zu .ico-Icon
-# ICON_PATH = './icon.ico'
+ICON_PATH = './icon.ico'
 
 ###################################################################################################################
 
@@ -231,7 +231,7 @@ root = tk.Tk()
 root.title("Auto-Clicker")
 root.geometry("500x500")
 root.configure(bg="#f0f0f0")
-# root.iconbitmap(ICON_PATH)
+root.iconbitmap(ICON_PATH)
 
 custom_font = tkfont.Font(family="Helvetica", size=12, weight="bold")
 

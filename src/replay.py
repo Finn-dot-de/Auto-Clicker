@@ -1,9 +1,22 @@
+# replay.py
 import time
 import ast
-import traceback
-from tkinter import filedialog
-from src.globaly import bool_dauerschleife, esc_flag, stop_event
+import tkinter as tk
+from tkinter import messagebox, filedialog
+from tkinter import font as tkfont
 from pynput import mouse, keyboard
+import threading
+import queue
+import traceback
+import pyautogui
+import pygetwindow as gw
+import ast
+import time
+import traceback
+from pynput import mouse, keyboard
+
+stop_event = threading.Event()
+esc_flag = threading.Event()
 
 def hole_taste(taste_str):
     print(f"Verarbeite Tastencode: {taste_str}")  # Debug-Ausgabe
