@@ -1,22 +1,10 @@
 # replay.py
-import time
-import ast
-import tkinter as tk
-from tkinter import messagebox, filedialog
-from tkinter import font as tkfont
-from pynput import mouse, keyboard
-import threading
-import queue
-import traceback
-import pyautogui
-import pygetwindow as gw
-import ast
-import time
-import traceback
-from pynput import mouse, keyboard
 
-stop_event = threading.Event()
-esc_flag = threading.Event()
+import time
+import ast
+import traceback
+from pynput import mouse, keyboard
+import globals  # Importieren der globalen Variablen
 
 def hole_taste(taste_str):
     print(f"Verarbeite Tastencode: {taste_str}")  # Debug-Ausgabe
@@ -61,7 +49,7 @@ def spiele_ereignisse_ab(dateipfad):
     start_zeit = ereignisse[0][1]
 
     for ereignis in ereignisse:
-        if esc_flag.is_set() or stop_event.is_set():
+        if globals.esc_flag.is_set() or globals.stop_event.is_set():
             bool_dauerschleife = False
             break
 
@@ -88,5 +76,14 @@ def spiele_ereignisse_ab(dateipfad):
             print(f"Fehler beim Verarbeiten des Ereignisses {ereignis}: {e}")
             traceback.print_exc()
 
-    if bool_dauerschleife:
+    if globals.bool_dauerschleife:
         spiele_ereignisse_ab(dateipfad)
+
+def esc_listener():
+    with keyboard.Listener(on_press=bei_esc_druck) as listener:
+        listener.join()
+
+def bei_esc_druck(taste):
+    if taste == keyboard.Key.esc:
+        globals.esc_flag.set()
+        return False

@@ -1,30 +1,16 @@
 # main.py
-import tkinter as tk
-from tkinter import messagebox, filedialog, font as tkfont
-import threading
-from record import starte_aufzeichnung, stoppe_aufzeichnung, ereignisse_queue
-from replay import spiele_ereignisse_ab
-import time
-import ast
-import tkinter as tk
-from tkinter import messagebox, filedialog
-from tkinter import font as tkfont
-from pynput import mouse, keyboard
-import threading
-import queue
-import traceback
-import pyautogui
-import pygetwindow as gw
 
-# Globale Variablen
-bool_dauerschleife = False
-stop_event = threading.Event()
-esc_flag = threading.Event()
+import tkinter as tk
+from tkinter import filedialog, messagebox, font as tkfont
+import threading
+from record import starte_aufzeichnung, stoppe_aufzeichnung
+from replay import spiele_ereignisse_ab
+import globals  # Importieren der globalen Variablen
+from pynput import mouse, keyboard
 
 def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
-    global bool_dauerschleife
-    esc_flag.clear()
-    stop_event.clear()
+    globals.esc_flag.clear()
+    globals.stop_event.clear()
     dateipfad = filedialog.askopenfilename(defaultextension=".txt", filetypes=[("Textdateien", "*.txt")])
     if not dateipfad:
         return
@@ -39,19 +25,10 @@ def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
         if abspielen_thread.is_alive() or esc_thread.is_alive():
             root.after(100, check_threads)
         else:
-            if not bool_dauerschleife:
+            if not globals.bool_dauerschleife:
                 messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
 
     check_threads()
-
-def stoppe_aufzeichnung_und_zeige_benachrichtigung():
-    stoppe_aufzeichnung()
-    messagebox.showinfo("Information", "Aufzeichnung erfolgreich beendet!")
-
-def update_dauerschleife():
-    global bool_dauerschleife
-    bool_dauerschleife = dauerschleife_var.get()
-    print(f"Dauerschleife ist {'aktiv' if bool_dauerschleife else 'inaktiv'}")
 
 def esc_listener():
     with keyboard.Listener(on_press=bei_esc_druck) as listener:
@@ -59,10 +36,13 @@ def esc_listener():
 
 def bei_esc_druck(taste):
     if taste == keyboard.Key.esc:
-        esc_flag.set()
+        globals.esc_flag.set()
         return False
 
-# GUI
+def update_dauerschleife():
+    globals.bool_dauerschleife = dauerschleife_var.get()
+    print(f"Dauerschleife ist {'aktiv' if globals.bool_dauerschleife else 'inaktiv'}")
+
 root = tk.Tk()
 root.title("Auto-Clicker")
 root.geometry("500x500")
