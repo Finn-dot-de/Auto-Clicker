@@ -5,6 +5,6 @@ dist
 build
 output
 
-icon.ico
+# icon.ico
 
 auto-klicker.py
