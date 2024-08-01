@@ -34,72 +34,57 @@ def hole_taste(taste_str):
 
 # Funktion zum Abspielen der Ereignisse aus einer Datei
 def spiele_ereignisse_ab(dateipfad):
-    global bool_dauerschleife  # Verwendet die globale Variable bool_dauerschleife
+    bool_dauerschleife = os.environ.get('BOOL_DAUERSCHLEIFE', 'False') == 'True'
+    print("replay.py>>>>>>>>>> ", bool_dauerschleife)
     try:
-        # Öffnet die Datei und liest die Ereignisse
-        with open(dateipfad, 'r') as f:
-            ereignisse = [ast.literal_eval(line.strip()) for line in f]
+        with open(dateipfad, 'r') as f:  # Datei zum Lesen öffnen
+            ereignisse = [ast.literal_eval(line.strip()) for line in f]  # Ereignisse aus der Datei lesen und parsen
     except Exception as e:
-        print(f"Fehler beim Lesen der Datei: {e}")  # Gibt eine Fehlermeldung aus, wenn die Datei nicht gelesen werden kann
-        traceback.print_exc()  # Druckt den vollständigen Fehler-Traceback
-        raise ValueError("Fehler beim Lesen der Datei")
+        print(f"Fehler beim Lesen der Datei: {e}")  # Fehlermeldung ausgeben
+        traceback.print_exc()  # Traceback drucken
+        raise ValueError("Fehler beim Lesen der Datei")  # Fehler werfen
 
     if not ereignisse:
-        raise ValueError("Keine Ereignisse in der ausgewählten Datei.")  # Hebt einen Fehler hervor, wenn keine Ereignisse gefunden werden
+        raise ValueError("Keine Ereignisse in der ausgewählten Datei.")  # Fehler werfen, wenn keine Ereignisse gefunden wurden
 
-    # Erstellt Controller-Objekte für Maus und Tastatur
-    maus_steuerung = mouse.Controller()
-    tastatur_steuerung = keyboard.Controller()
+    maus_steuerung = mouse.Controller()  # Maus-Controller initialisieren
+    tastatur_steuerung = keyboard.Controller()  # Tastatur-Controller initialisieren
 
-    start_zeit = ereignisse[0][1]  # Speichert die Startzeit des ersten Ereignisses
+    start_zeit = ereignisse[0][1]  # Startzeit des ersten Ereignisses
 
-    # Beginnt die Dauerschleife, wenn aktiviert
-    while True:
-        # Überprüft, ob ESC gedrückt wurde oder das Stop-Event gesetzt ist
-        if esc_flag.is_set() or stop_event.is_set():
-            bool_dauerschleife = False  # Setzt die Dauerschleife-Variable auf False
+    for ereignis in ereignisse:
+        if esc_flag.is_set() or stop_event.is_set():  # Abbrechen, wenn ESC-Flag oder Stop-Event gesetzt ist
+            bool_dauerschleife = False
             break
 
-        # Durchläuft alle Ereignisse in der Liste
-        for ereignis in ereignisse:
-            if esc_flag.is_set() or stop_event.is_set():  # Überprüft erneut, ob ESC gedrückt wurde oder das Stop-Event gesetzt ist
-                bool_dauerschleife = False  # Setzt die Dauerschleife-Variable auf False
-                break
+        ereignis_typ, ereignis_zeit, ereignis_daten = ereignis  # Ereignisdaten extrahieren
+        verzögerung = ereignis_zeit - start_zeit  # Verzögerung berechnen
+        time.sleep(verzögerung)  # Verzögerung einfügen
+        start_zeit = ereignis_zeit  # Startzeit aktualisieren
 
-            # Extrahiert die Ereignisdaten
-            ereignis_typ, ereignis_zeit, ereignis_daten = ereignis
-            verzögerung = ereignis_zeit - start_zeit  # Berechnet die Verzögerung basierend auf der Zeit des Ereignisses
-            time.sleep(verzögerung)  # Wartet für die berechnete Verzögerungszeit
-            start_zeit = ereignis_zeit  # Aktualisiert die Startzeit
+        try:
+            if ereignis_typ == 'klick':
+                x, y, taste_name = ereignis_daten
+                taste = mouse.Button.left if taste_name == 'left' else mouse.Button.right  # Maustaste bestimmen
+                maus_steuerung.position = (x, y)  # Mausposition setzen
+                maus_steuerung.click(taste)  # Mausklick ausführen
+            elif ereignis_typ == 'tastendruck':
+                taste = hole_taste(ereignis_daten)  # Taste verarbeiten
+                if taste is not None:
+                    tastatur_steuerung.press(taste)  # Taste drücken
+            elif ereignis_typ == 'tastenfreigabe':
+                taste = hole_taste(ereignis_daten)  # Taste verarbeiten
+                if taste is not None:
+                    tastatur_steuerung.release(taste)  # Taste freigeben
+        except Exception as e:
+            print(f"Fehler beim Verarbeiten des Ereignisses {ereignis}: {e}")  # Fehlermeldung ausgeben
+            traceback.print_exc()  # Traceback drucken
 
-            try:
-                # Verarbeitet Klick-Ereignisse
-                if ereignis_typ == 'klick':
-                    x, y, taste_name = ereignis_daten  # Extrahiert die Klick-Daten
-                    taste = mouse.Button.left if taste_name == 'left' else mouse.Button.right  # Bestimmt die Maustaste
-                    maus_steuerung.position = (x, y)  # Setzt die Mausposition
-                    maus_steuerung.click(taste)  # Führt den Klick aus
-                # Verarbeitet Tastendruck-Ereignisse
-                elif ereignis_typ == 'tastendruck':
-                    taste = hole_taste(ereignis_daten)  # Konvertiert den Tastencode in ein Tastenobjekt
-                    if taste is not None:
-                        tastatur_steuerung.press(taste)  # Drückt die Taste
-                # Verarbeitet Tastenfreigabe-Ereignisse
-                elif ereignis_typ == 'tastenfreigabe':
-                    taste = hole_taste(ereignis_daten)  # Konvertiert den Tastencode in ein Tastenobjekt
-                    if taste is not None:
-                        tastatur_steuerung.release(taste)  # Lässt die Taste los
-            except Exception as e:
-                print(f"Fehler beim Verarbeiten des Ereignisses {ereignis}: {e}")  # Gibt eine Fehlermeldung aus, wenn ein Fehler auftritt
-                traceback.print_exc()  # Druckt den vollständigen Fehler-Traceback
-
-        if not bool_dauerschleife:  # Bricht die Schleife ab, wenn die Dauerschleife deaktiviert ist
-            # Zeigt ein Popup für das Ende des Replays an
-            messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
-            break
-        elif bool_dauerschleife:
-            spiele_ereignisse_ab(dateipfad)
-
+    if bool_dauerschleife:
+        spiele_ereignisse_ab(dateipfad)  # Ereignisse erneut abspielen, wenn Dauerschleife aktiv ist
+    else: 
+        messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
+        
 # Funktion, die einen Listener für ESC-Tastendrücke startet
 def esc_listener():
     with keyboard.Listener(on_press=bei_esc_druck) as listener:

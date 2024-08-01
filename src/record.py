@@ -3,7 +3,7 @@ import time  # Für Zeitstempel und Verzögerungen
 import pyautogui  # Zum Simulieren von Maus- und Tastatureingaben
 import pygetwindow as gw  # Zum Interagieren mit Fenstern
 from pynput import mouse, keyboard  # Zum Erfassen von Maus- und Tastatureingaben
-from src.globals import *  # Importiert globale Variablen und Events aus dem globals-Modul
+from src.globals import aufzeichnung, ereignisse_queue, stop_event  # Importiert globale Variablen und Events aus dem globals-Modul
 from tkinter import messagebox, filedialog  # Für Nachrichtenboxen und Dateidialoge
 import threading  # Für paralleles Ausführen von Threads
 
@@ -24,7 +24,8 @@ def bei_klick(x, y, taste, gedrückt):
 
 # Funktion, die bei einem Tastendruck ausgeführt wird
 def bei_tastendruck(taste):
-    if globals.aufzeichnung:  # Wenn die Aufzeichnung läuft
+    global aufzeichnung  # Deklariert die globale Variable aufzeichnung
+    if aufzeichnung:  # Wenn die Aufzeichnung läuft
         try:
             ereignis_daten = taste.char if taste.char else str(taste)  # Erfasst die gedrückte Taste
             ereignisse_queue.put(('tastendruck', time.time(), ereignis_daten))  # Fügt das Ereignis zur Ereignis-Queue hinzu
@@ -36,6 +37,7 @@ def bei_tastendruck(taste):
 
 # Funktion, die bei einer Tastenfreigabe ausgeführt wird
 def bei_tastenfreigabe(taste):
+    global aufzeichnung  # Deklariert die globale Variable aufzeichnung
     if aufzeichnung:  # Wenn die Aufzeichnung läuft
         ereignis_daten = str(taste)  # Erfasst die freigegebene Taste
         ereignisse_queue.put(('tastenfreigabe', time.time(), ereignis_daten))  # Fügt das Ereignis zur Ereignis-Queue hinzu
@@ -54,6 +56,7 @@ def starte_tastatur_listener():
 
 # Funktion zum Starten der Aufzeichnung
 def starte_aufzeichnung():
+    global aufzeichnung  # Deklariert die globale Variable aufzeichnung
     aufzeichnung = True  # Setzt die Aufzeichnungs-Variable auf True
     ereignisse_queue.queue.clear()  # Löscht die Ereignis-Queue
     press_windows_d()  # Minimiert alle Fenster
@@ -64,6 +67,7 @@ def starte_aufzeichnung():
 
 # Funktion zum Stoppen der Aufzeichnung
 def stoppe_aufzeichnung():
+    global aufzeichnung  # Deklariert die globale Variable aufzeichnung
     aufzeichnung = False  # Setzt die Aufzeichnungs-Variable auf False
     stop_event.set()  # Setzt das Stop-Event
     bring_window_to_foreground('Auto-Clicker')  # Bringt das Hauptfenster in den Vordergrund
@@ -73,7 +77,7 @@ def stoppe_aufzeichnung():
         try:
             with open(dateipfad, 'w') as f:  # Öffnet die Datei zum Schreiben
                 while not ereignisse_queue.empty():  # Solange die Ereignis-Queue nicht leer ist
-                    ereignis = globals.ereignisse_queue.get()  # Holt das nächste Ereignis aus der Queue
+                    ereignis = ereignisse_queue.get()  # Holt das nächste Ereignis aus der Queue
                     if ereignis[0] == 'tastendruck' and ereignis[2] == 'Key.esc':  # Überspringt ESC-Tastendrücke
                         continue
                     if ereignis[0] == 'tastenfreigabe' and ereignis[2] == 'Key.esc':  # Überspringt ESC-Tastenfreigaben

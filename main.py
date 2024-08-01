@@ -6,6 +6,7 @@ from src.globals import *  # Importiert globale Variablen aus dem globals-Modul
 from src.record import starte_aufzeichnung  # Importiert die Funktion zum Starten der Aufzeichnung
 from src.replay import spiele_ereignisse_ab  # Importiert die Funktion zum Abspielen der Ereignisse
 from pynput import keyboard  # Zum Erfassen von Tastatureingaben
+import os
 
 # Funktion zum Abspielen der Ereignisse und Anzeigen von Fehlermeldungen
 def spiele_ereignisse_ab_und_zeige_fehlermeldungen():
@@ -45,8 +46,12 @@ def bei_esc_druck(taste):
 
 # Funktion zur Aktualisierung der Dauerschleifen-Variable
 def update_dauerschleife():
+    global bool_dauerschleife  # Deklariert die Variable als global
     bool_dauerschleife = dauerschleife_var.get()  # Aktualisiert die globale Dauerschleifen-Variable
+    os.environ['BOOL_DAUERSCHLEIFE'] = str(bool_dauerschleife)
     print(f"Dauerschleife ist {'aktiv' if bool_dauerschleife else 'inaktiv'}")  # Gibt den Status der Dauerschleife aus
+    test = os.environ['BOOL_DAUERSCHLEIFE'] = str(bool_dauerschleife)
+    print("main.py<<<<<<<<<<<<<",test)
 
 # Erstellt das Hauptfenster der Anwendung
 root = tk.Tk()
