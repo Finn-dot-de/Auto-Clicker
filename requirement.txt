@@ -1,3 +1,4 @@
 pynput
 pyautogui
 pygetwindow
+pyinstaller
