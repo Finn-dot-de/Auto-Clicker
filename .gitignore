@@ -9,3 +9,9 @@ output
 
 auto-klicker.py
 test.txt
+.idea/.gitignore
+.idea/Auto-Clicker.iml
+.idea/misc.xml
+.idea/modules.xml
+.idea/vcs.xml
+.idea/inspectionProfiles/profiles_settings.xml

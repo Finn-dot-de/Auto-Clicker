@@ -1,10 +1,13 @@
 # Importiert die benötigten Module und Bibliotheken
-import time  # Zum Arbeiten mit Zeitfunktionen
 import ast  # Zum sicheren Parsen von Python-Ausdrücken aus Strings
+import time  # Zum Arbeiten mit Zeitfunktionen
 import traceback  # Zum Drucken von Tracebacks bei Ausnahmen
-from pynput import mouse, keyboard  # Zum Erfassen und Steuern von Maus- und Tastaturereignissen
-from src.globals import *  # Importiert globale Variablen aus dem globals-Modul
 from tkinter import messagebox  # Zum Anzeigen von Popup-Nachrichten
+
+from pynput import mouse, keyboard  # Zum Erfassen und Steuern von Maus- und Tastaturereignissen
+
+from src.globals import *  # Importiert globale Variablen aus dem globals-Modul
+
 
 # Funktion zum Konvertieren von Tastenzeichenfolgen in Tastenobjekte
 def hole_taste(taste_str):
@@ -16,7 +19,8 @@ def hole_taste(taste_str):
             # Versucht, die entsprechende Taste aus dem keyboard.Key-Objekt zu holen
             return getattr(keyboard.Key, taste_str.split('.')[1])
         except AttributeError:
-            print(f"Unbekannter Tastencode: {taste_str}")  # Gibt eine Fehlermeldung aus, wenn die Taste nicht gefunden wird
+            print(
+                f"Unbekannter Tastencode: {taste_str}")  # Gibt eine Fehlermeldung aus, wenn die Taste nicht gefunden wird
             return None
 
     # Behandelt druckbare Zeichen (einzelne Buchstaben oder Symbole)
@@ -32,6 +36,7 @@ def hole_taste(taste_str):
         print(f"Unbekannter Tastencode: {taste_str}")  # Gibt eine Fehlermeldung aus, wenn die Taste nicht erkannt wird
         return None
 
+
 # Funktion zum Abspielen der Ereignisse aus einer Datei
 def spiele_ereignisse_ab(dateipfad):
     bool_dauerschleife = os.environ.get('BOOL_DAUERSCHLEIFE', 'False') == 'True'
@@ -45,7 +50,8 @@ def spiele_ereignisse_ab(dateipfad):
         raise ValueError("Fehler beim Lesen der Datei")  # Fehler werfen
 
     if not ereignisse:
-        raise ValueError("Keine Ereignisse in der ausgewählten Datei.")  # Fehler werfen, wenn keine Ereignisse gefunden wurden
+        raise ValueError(
+            "Keine Ereignisse in der ausgewählten Datei.")  # Fehler werfen, wenn keine Ereignisse gefunden wurden
 
     maus_steuerung = mouse.Controller()  # Maus-Controller initialisieren
     tastatur_steuerung = keyboard.Controller()  # Tastatur-Controller initialisieren
@@ -82,13 +88,15 @@ def spiele_ereignisse_ab(dateipfad):
 
     if bool_dauerschleife:
         spiele_ereignisse_ab(dateipfad)  # Ereignisse erneut abspielen, wenn Dauerschleife aktiv ist
-    else: 
+    else:
         messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
-        
+
+
 # Funktion, die einen Listener für ESC-Tastendrücke startet
 def esc_listener():
     with keyboard.Listener(on_press=bei_esc_druck) as listener:
         listener.join()  # Startet den Listener und wartet, bis er beendet wird
+
 
 # Funktion, die auf ESC-Tastendrücke reagiert
 def bei_esc_druck(taste):

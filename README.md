@@ -1,23 +1,6 @@
 # Auto-Klicker
 # Bedienungsanleitung
 
-## Voraussetzungen
-### Für den Start der Pythonanwendung wenn keine EXE vorliegt:
-
-1. Installtion von Python auf Ihren Computer
-
-2. Installieren Sie die Pakete mit dem folgenden Befehl:
-
-    ```cmd
-    pip install -r requirement.txt
-    ```
-
-3. Starten der Anwendung durch diesen Befehl:
-
-    ```cmd
-    python main.py
-    ```
-
 ## Startbildschirm
 
 Beim Start des Programms sehen Sie das Hauptfenster des Auto-Clickers mit folgenden Bedienelementen:

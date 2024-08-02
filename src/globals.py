@@ -1,7 +1,6 @@
 # Importiert die benötigten Module
 import queue  # Für die Ereignis-Queue
 import threading  # Für Threading-Events
-import os
 
 # Globale Variablen
 ereignisse_queue = queue.Queue()  # Erstellt eine Queue für die Speicherung von Ereignissen
