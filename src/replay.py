@@ -88,6 +88,7 @@ def spiele_ereignisse_ab(dateipfad):
 
     if bool_dauerschleife:
         spiele_ereignisse_ab(dateipfad)  # Ereignisse erneut abspielen, wenn Dauerschleife aktiv ist
+        time.sleep(10)
     else:
         messagebox.showinfo("Information", "Wiedergabe erfolgreich abgeschlossen!")
 

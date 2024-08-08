@@ -1,14 +1,12 @@
-.venv
 __pycache__
 
 dist
 build
 output
 
-# icon.ico
-
 auto-klicker.py
 test.txt
+
 .idea/.gitignore
 .idea/Auto-Clicker.iml
 .idea/misc.xml
